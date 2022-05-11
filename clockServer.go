@@ -2,13 +2,22 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net"
 	"time"
+
+	//"os"
+	//"strings"
+	"flag"
 )
 
+//This declares an integer flag, -n, stored in the pointer nFlag, with type *int:
+var port = flag.Int("port", 8000, "Server port")
+
 func handleConn(c net.Conn) {
+	//flag.Parse()		//to parse the command line into the defined flags.
 	defer c.Close()
 	for {
 		_, err := io.WriteString(c, time.Now().Format("15:04:05\n"))
@@ -20,7 +29,8 @@ func handleConn(c net.Conn) {
 }
 
 func main() {
-	listener, err := net.Listen("tcp", "localhost:9090")
+	flag.Parse() //to parse the command line into the defined flags.
+	listener, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", *port))
 	if err != nil {
 		log.Fatal(err)
 	}
